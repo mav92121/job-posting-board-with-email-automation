@@ -1,4 +1,6 @@
+import { useState } from "react";
 const VerifyOTP = () => {
+  const [isVerified, setIsVerified] = useState(false);
   return (
     <div className="flex flex-col h-screen">
       <div className="flex justify-between px-4 py-3">
@@ -29,29 +31,53 @@ const VerifyOTP = () => {
             </p>
 
             {/* Email OTP Input */}
-            <div className="flex flex-col mb-4">
+            <div className="flex flex-col mb-4 relative">
               <input
                 type="text"
+                disabled={isVerified}
                 placeholder="Email OTP"
-                className="w-full py-1 px-3 border bg-[#F4F4F4] border-[#CCCCCC] rounded-lg mb-3 text-sm md:text-base"
+                className="w-full  py-1 px-3 border bg-[#F4F4F4] border-[#CCCCCC] rounded-lg mb-3 text-sm md:text-base"
                 required
               />
-              <button className="bg-[#0B66EF] text-white py-1 px-3 font-bold rounded-lg w-full">
-                Verify
-              </button>
+              {!isVerified && (
+                <button className="bg-[#0B66EF] text-white py-1 px-3 font-bold rounded-lg w-full">
+                  Verify
+                </button>
+              )}
+              {isVerified && (
+                <div className="absolute right-2 top-[6px]">
+                  <img
+                    src="../../public/check_circle.png"
+                    alt="Verified"
+                    className="w-5 h-5"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Mobile OTP Input */}
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               <input
                 type="text"
+                disabled={isVerified}
                 placeholder="Mobile OTP"
                 className="w-full py-1 px-3 border bg-[#F4F4F4] border-[#CCCCCC] rounded-lg mb-3 text-sm md:text-base"
                 required
               />
-              <button className="bg-[#0B66EF] text-white py-1 px-3 font-bold rounded-lg  w-full">
-                Verify
-              </button>
+              {!isVerified && (
+                <button className="bg-[#0B66EF] text-white py-1 px-3 font-bold rounded-lg  w-full">
+                  Verify
+                </button>
+              )}
+              {isVerified && (
+                <div className="absolute right-2 top-[6px]">
+                  <img
+                    src="../../public/check_circle.png"
+                    alt="Verified"
+                    className="w-5 h-5"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
