@@ -1,4 +1,19 @@
+import { useState } from "react";
+
 const SignUp = () => {
+  const initialFormData = {
+    name: "",
+    phone: "",
+    company: "",
+    email: "",
+    size: 0,
+  };
+  const [formData, setFormData] = useState(initialFormData);
+
+  const handleProceed = (e) => {
+    e.preventDefault();
+    console.log("formData ", formData);
+  };
   return (
     <div className="flex flex-col h-screen">
       <div className="flex justify-between px-4 py-2 md:px-10 md:py-4">
@@ -16,8 +31,8 @@ const SignUp = () => {
         <div className="flex-1 flex items-center justify-center p-4 md:p-8 bg-white">
           <p className="text-gray-600 text-base md:text-lg text-center md:text-left">
             Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry&apos;s standard dummy text
-            ever since the 1500s, when an unknown printer took a galley.
+            industry. Lorem Ipsum has been the industry&apos;s standard dummy
+            text ever since the 1500s, when an unknown printer took a galley.
           </p>
         </div>
 
@@ -33,6 +48,10 @@ const SignUp = () => {
             <div className="mb-4">
               <input
                 type="text"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Name"
                 className="w-full px-3 py-2 border bg-[#F4F4F4] border-[#CCCCCC] rounded-lg"
                 required
@@ -43,6 +62,10 @@ const SignUp = () => {
             <div className="mb-4">
               <input
                 type="text"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
                 placeholder="Phone no."
                 className="w-full px-3 py-2 border bg-[#F4F4F4] border-[#CCCCCC] rounded-lg"
                 required
@@ -53,6 +76,10 @@ const SignUp = () => {
             <div className="mb-4">
               <input
                 type="text"
+                value={formData.company}
+                onChange={(e) =>
+                  setFormData({ ...formData, company: e.target.value })
+                }
                 placeholder="Company Name"
                 className="w-full px-3 py-2 border bg-[#F4F4F4] border-[#CCCCCC] rounded-lg"
                 required
@@ -63,6 +90,10 @@ const SignUp = () => {
             <div className="mb-4">
               <input
                 type="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 placeholder="Company Email"
                 className="w-full px-3 py-2 border bg-[#F4F4F4] border-[#CCCCCC] rounded-lg"
                 required
@@ -72,6 +103,10 @@ const SignUp = () => {
             {/* Employee Size Input */}
             <div className="mb-4">
               <input
+                value={formData.size}
+                onChange={(e) =>
+                  setFormData({ ...formData, size: e.target.value })
+                }
                 type="number"
                 placeholder="Employee Size"
                 className="w-full px-3 py-2 border bg-[#F4F4F4] border-[#CCCCCC] rounded-lg"
@@ -86,7 +121,10 @@ const SignUp = () => {
                 Terms <span className="text-black">&</span> Conditions
               </span>
             </p>
-            <button className="w-full bg-[#0B66EF] text-white px-3 py-2 mt-3 rounded-lg font-bold">
+            <button
+              onClick={handleProceed}
+              className="w-full bg-[#0B66EF] text-white px-3 py-2 mt-3 rounded-lg font-bold"
+            >
               Proceed
             </button>
           </form>
