@@ -13,8 +13,8 @@ const VerifyOTP = () => {
         <div className="flex-1 flex items-center justify-center p-6 md:p-8">
           <p className="text-gray-600 text-center text-sm md:text-lg">
             Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley.
+            industry. Lorem Ipsum has been the industry&apos;s standard dummy
+            text ever since the 1500s, when an unknown printer took a galley.
           </p>
         </div>
 
