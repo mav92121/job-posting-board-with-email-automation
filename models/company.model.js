@@ -9,17 +9,17 @@ const companySchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  password: {
-    type: String,
-    required: true,
+  isEmailVerifed: {
+    type: Boolean,
+    default: false,
   },
-  isVerified: {
+  isPhoneVerified: {
     type: Boolean,
     default: false,
   },
   verificationToken: String,
   verificationExpires: Date,
-  phoneNumbers: String,
+  phoneNumber: String,
   employeeSize: Number,
   createdAt: {
     type: Date,
