@@ -1,6 +1,22 @@
+import axios from "axios";
+import { set } from "mongoose";
 import { useState } from "react";
 const VerifyOTP = () => {
   const [isVerified, setIsVerified] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [emailOtp, setEmailOtp] = useState("");
+  const handleEmailVerify = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/companies/verify/email`,
+        { emailOtp }
+      );
+      setEmailOtp("");
+      setIsEmailVerified(true);
+    } catch (e) {
+      console.error(e);
+    }
+  };
   return (
     <div className="flex flex-col h-screen">
       <div className="flex justify-between px-4 py-3">
@@ -34,17 +50,22 @@ const VerifyOTP = () => {
             <div className="flex flex-col mb-4 relative">
               <input
                 type="text"
-                disabled={isVerified}
+                value={emailOtp}
+                onChange={(e) => setEmailOtp(e.target.value)}
+                disabled={isEmailVerified}
                 placeholder="Email OTP"
                 className="w-full  py-1 px-3 border bg-[#F4F4F4] border-[#CCCCCC] rounded-lg mb-3 text-sm md:text-base"
                 required
               />
-              {!isVerified && (
-                <button className="bg-[#0B66EF] text-white py-1 px-3 font-bold rounded-lg w-full">
+              {!isEmailVerified && (
+                <button
+                  onClick={handleEmailVerify}
+                  className="bg-[#0B66EF] text-white py-1 px-3 font-bold rounded-lg w-full"
+                >
                   Verify
                 </button>
               )}
-              {isVerified && (
+              {isEmailVerified && (
                 <div className="absolute right-2 top-[6px]">
                   <img
                     src="../../public/check_circle.png"

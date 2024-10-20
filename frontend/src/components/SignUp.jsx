@@ -1,18 +1,30 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const SignUp = () => {
+  const navigate = useNavigate();
+  console.log("backdne ", import.meta.env.VITE_BACKEND_URL);
   const initialFormData = {
     name: "",
     phone: "",
     company: "",
     email: "",
-    size: 0,
+    size: undefined,
   };
   const [formData, setFormData] = useState(initialFormData);
 
-  const handleProceed = (e) => {
+  const handleProceed = async (e) => {
     e.preventDefault();
-    console.log("formData ", formData);
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/companies/register`,
+        formData
+      );
+      console.log("res", res);
+      return navigate("/verify");
+    } catch (e) {
+      console.error(e);
+    }
   };
   return (
     <div className="flex flex-col h-screen">

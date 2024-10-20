@@ -4,7 +4,7 @@ const router = express.Router();
 import {
   registerCompany,
   loginCompany,
-  verifyAccount,
+  verifyEmail,
 } from "../controllers/company.controller.js";
 // Company registration
 router.post("/register", registerCompany);
@@ -13,6 +13,6 @@ router.post("/register", registerCompany);
 router.post("/login", loginCompany);
 
 // Verify account
-router.get("/verify/:token", verifyAccount);
+router.post("/verify/email", verifyEmail);
 
 export default router;

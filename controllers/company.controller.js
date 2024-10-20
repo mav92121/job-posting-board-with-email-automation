@@ -1,12 +1,21 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
-import Company from "../models/company.model.js";
 import { v4 as uuidv4 } from "uuid";
+import Company from "../models/company.model.js";
+import twilio from "twilio";
 
-// Company Registration
 export const registerCompany = async (req, res) => {
-  const { name, email, password } = req.body;
+  const {
+    name,
+    email,
+    phone: phoneNumber,
+    size: employeeSize,
+    company: companyName,
+  } = req.body;
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const client = twilio(accountSid, authToken);
 
   try {
     let company = await Company.findOne({ email });
@@ -15,26 +24,29 @@ export const registerCompany = async (req, res) => {
       return res.status(400).json({ msg: "Company already exists" });
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     // Generate verification token
     const verificationToken = uuidv4();
-
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const phoneOtp = Math.floor(100000 + Math.random() * 900000).toString();
     company = new Company({
       name,
       email,
-      password: hashedPassword,
+      phoneNumber,
+      companyName,
+      employeeSize,
       verificationToken,
-      verificationExpires: Date.now() + 3600000, // 1 hour
+      emailOtp: emailOtp,
+      phoneOtp: phoneOtp,
+      otpExpires: Date.now() + 3600000,
     });
 
     await company.save();
 
     // Send verification email
+    console.log("email", process.env.EMAIL_USER);
+    console.log("pass", process.env.EMAIL_PASS);
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -44,19 +56,29 @@ export const registerCompany = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Verify your account",
-      html: `<p>Click the link to verify your account: <a href="http://localhost:5000/api/companies/verify/${verificationToken}">Verify</a></p>`,
+      subject: `OTP for verifying email`,
+      html: `<p>Your otp is ${emailOtp}</p>`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        return res.status(500).send({ msg: "Error sending email" });
+        return res.status(500).send({ msg: "Error sending email " + error });
       } else {
         res.status(201).json({
           msg: "Company registered. Please check your email for verification link.",
         });
       }
     });
+    // console.log("phone Number ->", "+91" + phoneNumber);
+    // await client.messages.create({
+    //   body: `Your OTP code is ${phoneOtp}`,
+    //   // from: process.env.TWILIO_PHONE_NUMBER,
+    //   // to: "+91" + phoneNumber,
+    //   from: "+18866990320",
+    //   to: "+919327260135",
+    // });
+
+    res.status(201).json({ msg: "Company created and OTP sent" });
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");
@@ -106,16 +128,48 @@ export const verifyAccount = async (req, res) => {
         .status(400)
         .json({ msg: "Verification token is invalid or has expired" });
     }
+    if (company.emailOtp !== emailOtp || company.phoneOtp !== phoneOtp) {
+      return res.status(400).json({ msg: "Invalid OTP" });
+    }
 
-    company.isVerified = true;
+    company.isEmailVerifed = true;
+    company.isPhoneVerified = true;
     company.verificationToken = undefined;
     company.verificationExpires = undefined;
+    company.emailOtp = undefined;
+    company.phoneOtp = undefined;
+    company.otpExpires = undefined;
 
     await company.save();
 
     res.json({ msg: "Account verified" });
   } catch (error) {
     console.error(error);
+    res.status(500).send("Server error");
+  }
+};
+
+export const verifyEmail = async (req, res) => {
+  const { emailOtp } = req.body;
+  try {
+    const company = await Company.findOne({
+      emailOtp,
+    });
+    if (!company) {
+      return res
+        .status(400)
+        .json({ msg: "Verification token is invalid or has expired" });
+    }
+    if (company.emailOtp !== emailOtp || company.otpExpires < Date.now()) {
+      return res.status(400).json({ msg: "Invalid OTP" });
+    }
+    company.isEmailVerifed = true;
+    company.emailOtp = undefined;
+    company.otpExpires = undefined;
+    await company.save();
+    res.json({ msg: "Email verified" });
+  } catch (e) {
+    console.error(e);
     res.status(500).send("Server error");
   }
 };

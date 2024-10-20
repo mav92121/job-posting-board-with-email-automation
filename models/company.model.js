@@ -9,6 +9,10 @@ const companySchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  companyName: {
+    type: String,
+    required: true,
+  },
   isEmailVerifed: {
     type: Boolean,
     default: false,
@@ -18,9 +22,11 @@ const companySchema = new mongoose.Schema({
     default: false,
   },
   verificationToken: String,
-  verificationExpires: Date,
   phoneNumber: String,
   employeeSize: Number,
+  otpExpires: Date,
+  emailOtp: String,
+  phoneOtp: String,
   createdAt: {
     type: Date,
     default: Date.now,
